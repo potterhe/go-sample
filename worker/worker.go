@@ -8,7 +8,8 @@ import (
 
 type EchoWorker struct {
 	N int
-	In <- chan int64
+	In <-chan int64
+	shutdown bool
 }
 
 func (w *EchoWorker) Serve () {
@@ -18,7 +19,10 @@ func (w *EchoWorker) Serve () {
 			w.handle(i)
 
 		// 5秒后超时
-		case <-time.After(5 * time.Second):
+		case <-time.After(1 * time.Second):
+			if w.shutdown {
+				return
+			}
 			break
 		}
 	}
@@ -27,7 +31,7 @@ func (w *EchoWorker) Serve () {
 func (w *EchoWorker) handle (i int64) {
 	log.Println("echo:", i)
 	time.Sleep(2 * time.Second)
-	r := rand.Intn(3)
+	r := rand.Intn(10)
 	if r == 0 {
 		panic("panic")
 	}
@@ -37,13 +41,22 @@ func (w *EchoWorker) Workers () int {
 	return w.N
 }
 
+func (w *EchoWorker) ShutDown () {
+	w.shutdown = true
+}
+
 type GenDataWorker struct {
 	N int
-	Out chan int64
+	Out chan<- int64
+	shutdown bool
 }
 
 func (w *GenDataWorker) Serve () {
 	for {
+		if w.shutdown {
+			return
+		}
+
 		i := time.Now().Unix()
 		log.Println("gen", i)
 		w.Out <- i
@@ -52,4 +65,8 @@ func (w *GenDataWorker) Serve () {
 
 func (w *GenDataWorker) Workers () int {
 	return w.N
+}
+
+func (w *GenDataWorker) ShutDown () {
+	w.shutdown = true
 }

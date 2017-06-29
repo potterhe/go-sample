@@ -10,7 +10,7 @@ import (
 
 func main() {
 
-	ch := make(chan int64, 5)
+	ch := make(chan int64, 10)
 
 	w := worker.EchoWorker{N: 2, In: ch}
 	w2 := worker.GenDataWorker{N: 1, Out: ch}
@@ -20,10 +20,14 @@ func main() {
 	master.Register(&w2)
 	master.Serve()
 
-	channelSignal := make(chan os.Signal)
-	signal.Notify(channelSignal, os.Interrupt, syscall.SIGTERM)
-	log.Println("started")
-	<-channelSignal
-	log.Println("end")
+	notifier := make(chan os.Signal, 1)
+	signal.Notify(notifier, syscall.SIGINT, syscall.SIGTERM)
+	go func() {
+		sig := <-notifier
+		log.Printf("received %v signal, shutting down...", sig)
+		master.ShutDown()
+	}()
+
+	master.Wait()
 	os.Exit(0)
 }
