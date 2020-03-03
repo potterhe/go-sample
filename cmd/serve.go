@@ -17,6 +17,7 @@ package cmd
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -33,8 +34,12 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("serve called")
+		fmt.Println("Echo: " + strings.Join(args, " "))
+		fmt.Println(foo)
 	},
 }
+
+var foo string
 
 func init() {
 	rootCmd.AddCommand(serveCmd)
@@ -44,6 +49,7 @@ func init() {
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
 	// serveCmd.PersistentFlags().String("foo", "", "A help for foo")
+	serveCmd.PersistentFlags().StringVarP(&foo, "foo", "f", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
