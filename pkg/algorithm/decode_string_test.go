@@ -63,21 +63,20 @@ func decodeString(s string) string {
 			st = 2
 			continue
 
-		} else {
-			if st == 2 {
+		}
+		if st == 2 {
 
-				coefficient, _ := strconv.Atoi(string(s1[i]))
-				for j := 0; j < coefficient; j++ {
-					for m := len(curr) - 1; m >= 0; m-- {
-						stack.push(curr[m])
-					}
+			coefficient, _ := strconv.Atoi(string(s1[i]))
+			for j := 0; j < coefficient; j++ {
+				for m := len(curr) - 1; m >= 0; m-- {
+					stack.push(curr[m])
 				}
-				curr = curr[0:0]
-				st = 1
-
-			} else {
-				stack.push(s1[i])
 			}
+			curr = curr[0:0]
+			st = 1
+
+		} else {
+			stack.push(s1[i])
 		}
 	}
 
