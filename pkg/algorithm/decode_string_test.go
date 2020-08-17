@@ -27,6 +27,14 @@ func TestDecodeString(t *testing.T) {
 			input:  "2[中国]",
 			output: "中国中国",
 		},
+		{
+			input:  "2[abc]3[cd]ef",
+			output: "abcabccdcdcdef",
+		},
+		{
+			input:  "abc3[cd]xyz",
+			output: "abccdcdcdxyz",
+		},
 	}
 
 	for _, test := range tests {
