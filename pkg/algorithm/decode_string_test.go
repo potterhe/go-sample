@@ -70,10 +70,10 @@ func decodeString(s string) string {
 			// 找系数
 			st = 2
 			continue
-
 		}
-		if st == 2 {
 
+		if st == 2 {
+			// todo 系数是多位数字的
 			coefficient, _ := strconv.Atoi(string(s1[i]))
 			for j := 0; j < coefficient; j++ {
 				for m := len(curr) - 1; m >= 0; m-- {
@@ -82,10 +82,11 @@ func decodeString(s string) string {
 			}
 			curr = curr[0:0]
 			st = 1
+			continue
 
-		} else {
-			stack.push(s1[i])
 		}
+
+		stack.push(s1[i])
 	}
 
 	var r []rune
