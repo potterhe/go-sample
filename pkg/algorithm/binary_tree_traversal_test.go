@@ -1,7 +1,6 @@
 package algorithm
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -33,74 +32,29 @@ func (s *treeNodeStack) peek() *TreeNode {
 	return s.stack[len(s.stack)-1]
 }
 
-/**
- * Definition for a binary tree node.
- * type TreeNode struct {
- *     Val int
- *     Left *TreeNode
- *     Right *TreeNode
- * }
- */
-func preorderTraversal(root *TreeNode) []int {
-	return preorderTraversal2(root)
-
-	r := make([]int, 0)
-	if root == nil {
-		return r
-	}
-
-	r = append(r, root.Val)
-
-	if root.Left != nil {
-		rl := preorderTraversal(root.Left)
-		r = append(r, rl...)
-	}
-	if root.Right != nil {
-		rr := preorderTraversal(root.Right)
-		r = append(r, rr...)
-	}
-	return r
-}
-
-func preorderTraversal2(root *TreeNode) []int {
-	r := make([]int, 0)
-	if root == nil {
-		return r
-	}
-
-	stack := treeNodeStack{}
-	stack.push(root)
-	for stack.len() > 0 {
-		curr := stack.pop()
-		if curr.Right != nil {
-			stack.push(curr.Right)
-		}
-		if curr.Left != nil {
-			stack.push(curr.Left)
-		}
-		r = append(r, curr.Val)
-	}
-
-	return r
-}
-
 func TestBinaryTreeInorderTraversal(t *testing.T) {
-
+	/*
+			 1
+		    / \
+		   2   3
+	*/
 	tree := TreeNode{
 		Val: 1,
 		Left: &TreeNode{
 			Val: 2,
-			Right: &TreeNode{
-				Val: 3,
-			},
+		},
+		Right: &TreeNode{
+			Val: 3,
 		},
 	}
-	//
 
-	r := preorderTraversal(&tree)
-	fmt.Println(r)
-	//r1 := []int{1, 2, 3}
-
+	/*
+			 1
+		    /
+		   2
+		  / \
+		 4   3
+	*/
 	tree2 := TreeNode{
 		Val: 1,
 		Left: &TreeNode{
@@ -113,14 +67,6 @@ func TestBinaryTreeInorderTraversal(t *testing.T) {
 			},
 		},
 	}
-	r2 := preorderTraversal(&tree2)
-	fmt.Println(r2)
-	//r1 := []int{1, 2, 3}
-
-	r3 := inorderTraversal(&tree)
-	r4 := inorderTraversal(&tree2)
-	fmt.Println("inorder:", r3, r4)
-	//inorderTraversal2(tree)
 
 	/*
 					 1
@@ -129,7 +75,7 @@ func TestBinaryTreeInorderTraversal(t *testing.T) {
 				  / \   \
 				 4   3   8
 		     		/ \
-		           5   6
+				   5   6
 	*/
 	tree3 := TreeNode{
 		Val: 1,
@@ -155,20 +101,91 @@ func TestBinaryTreeInorderTraversal(t *testing.T) {
 			},
 		},
 	}
-	// 4 2 5 3 6 1 7 8
-	r = preorderTraversal(&tree3)
-	fmt.Println("preorder:", r)
-	r5 := inorderTraversal2(&tree3)
-	r6 := inorderTraversal3(&tree3)
-	fmt.Println("inorder:", r5, r6)
 
-	r = postorderTraversal(&tree3)
-	fmt.Println("postorderTraversal:", r)
+	tests := []struct {
+		input     *TreeNode
+		preorder  []int
+		inorder   []int
+		postorder []int
+	}{
+		{
+			input:     &tree,
+			preorder:  []int{1, 2, 3},
+			inorder:   []int{2, 1, 3},
+			postorder: []int{2, 3, 1},
+		},
+		{
+			input:     &tree2,
+			preorder:  []int{1, 2, 4, 3},
+			inorder:   []int{4, 2, 3, 1},
+			postorder: []int{4, 3, 2, 1},
+		},
+		{
+			input:     &tree3,
+			preorder:  []int{1, 2, 4, 3, 5, 6, 7, 8},
+			inorder:   []int{4, 2, 5, 3, 6, 1, 7, 8},
+			postorder: []int{4, 5, 6, 3, 2, 8, 7, 1},
+		},
+	}
+
+	var r []int
+	for _, test := range tests {
+		r = preorderTraversal(test.input)
+		if !intSliceEqual(r, test.preorder) {
+			t.Errorf("preorder fail: except: %v, %v given\n", test.preorder, r)
+		}
+		r = inorderTraversal(test.input)
+		if !intSliceEqual(r, test.inorder) {
+			t.Errorf("inorder fail: except: %v, %v given\n", test.inorder, r)
+		}
+		r = postorderTraversal(test.input)
+		if !intSliceEqual(r, test.postorder) {
+			t.Errorf("postorder fail: except: %v, %v given\n", test.postorder, r)
+		}
+	}
+}
+
+/**
+ * Definition for a binary tree node.
+ * type TreeNode struct {
+ *     Val int
+ *     Left *TreeNode
+ *     Right *TreeNode
+ * }
+ */
+func preorderTraversal(root *TreeNode) []int {
+	//	return preorderTraversal2(root)
+
+	r := make([]int, 0)
+	if root == nil {
+		return r
+	}
+
+	r = append(r, root.Val)
+
+	if root.Left != nil {
+		rl := preorderTraversal(root.Left)
+		r = append(r, rl...)
+	}
+	if root.Right != nil {
+		rr := preorderTraversal(root.Right)
+		r = append(r, rr...)
+	}
+	return r
+}
+
+func preorderTraversal2(root *TreeNode) []int {
+	r := make([]int, 0)
+	if root == nil {
+		return r
+	}
+
+	return r
 }
 
 // 左中右
 func inorderTraversal(root *TreeNode) []int {
-	return inorderTraversal2(root)
+	//	return inorderTraversal2(root)
 	r := make([]int, 0)
 	if root == nil {
 		return r
@@ -212,26 +229,6 @@ func inorderTraversal2(root *TreeNode) []int {
 	// 前序 1 2 4 3 5 6 7 8
 	// 中序 4 2 5 3 6 1 7 8
 	// 后序 4 5 6 3 2 8 7 1
-	stack := treeNodeStack{}
-	stack.push(root)
-	for stack.len() > 0 {
-		curr := stack.pop()
-
-		// 标记位
-		if curr == nil {
-			r = append(r, stack.pop().Val)
-			continue
-		}
-
-		if curr.Right != nil {
-			stack.push(curr.Right)
-		}
-		stack.push(curr)
-		stack.push(nil) // 标记位
-		if curr.Left != nil {
-			stack.push(curr.Left)
-		}
-	}
 
 	return r
 }
@@ -242,18 +239,6 @@ func inorderTraversal3(root *TreeNode) []int {
 		return r
 	}
 
-	stack := treeNodeStack{}
-	curr := root
-	for curr != nil || stack.len() > 0 {
-		for curr != nil {
-			stack.push(curr)
-			curr = curr.Left
-		}
-
-		curr = stack.pop()
-		r = append(r, curr.Val)
-		curr = curr.Right
-	}
 	return r
 }
 
@@ -264,25 +249,25 @@ func postorderTraversal(root *TreeNode) []int {
 		return r
 	}
 
-	stack := treeNodeStack{}
-	curr := root
-	var last *TreeNode
-	for curr != nil || stack.len() > 0 {
-		for curr != nil {
-			stack.push(curr)
-			curr = curr.Left
-		}
-
-		curr = stack.peek()
-		if curr.Right == nil || curr.Right == last {
-			r = append(r, curr.Val)
-			stack.pop()
-			last = curr
-			curr = nil
-		} else {
-			curr = curr.Right
-		}
+	if root.Left != nil {
+		r = append(r, postorderTraversal(root.Left)...)
 	}
+	if root.Right != nil {
+		r = append(r, postorderTraversal(root.Right)...)
+	}
+	r = append(r, root.Val)
 
 	return r
+}
+
+func intSliceEqual(x, y []int) bool {
+	if len(x) != len(y) {
+		return false
+	}
+	for i, v := range x {
+		if v != y[i] {
+			return false
+		}
+	}
+	return true
 }
