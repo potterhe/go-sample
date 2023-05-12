@@ -34,7 +34,12 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("vault called")
-		vault.GetSecretWithKubernetesAuth()
+		str, err := vault.GetSecretWithKubernetesAuth()
+		if err != nil {
+			fmt.Println("err: ", err)
+			return
+		}
+		fmt.Println(str)
 	},
 }
 
