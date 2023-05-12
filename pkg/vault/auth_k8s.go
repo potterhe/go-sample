@@ -1,3 +1,5 @@
+// https://developer.hashicorp.com/vault/docs/auth/kubernetes
+
 package vault
 
 import (
